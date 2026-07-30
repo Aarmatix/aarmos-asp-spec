@@ -147,15 +147,14 @@ policy.autonomousScopes?:  autonomous_scopes  (snake_case → camelCase)
 
 `egress.allowlist` and `human_oversight.require_approval_for` are lint
 inputs in v1 and are **not** carried into the signed bundle. This keeps
-the on-wire canonical body byte-identical to bundles produced by the
-existing `scripts/mint-policy.mjs` — the same signature verifies.
+the on-wire canonical body byte-identical to other Aarmos policy bundles — the same signature verifies.
 
 ## 4. Signing
 
-Signature is Ed25519 over the canonical body (no whitespace, keys sorted
-at every depth). This canonicalization MUST match
-`packages/cli/src/lib/asp-compile.ts::canonicalize` and
-`src/lib/policy/bundle.ts::canonicalize`.
+Signature is Ed25519 over the canonical body. The canonical form is
+produced by recursively sorting object keys at every depth and emitting JSON with
+no whitespace between structural characters. Implementations MUST produce the
+same canonical bytes as the reference compiler bundled in `@aarmos/cli`.
 
 ```
 sig = base64( ed25519_sign(canonicalize(body), private_key) )
